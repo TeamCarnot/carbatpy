@@ -47,6 +47,8 @@ class static_heat_exchanger:
                  compositions=[[1.0], [1.0]], calc_type="const",
                  name="evaporator",
                  units=21):  
+
+
         """
         Initialization of the class static heat exchanger
         
@@ -116,7 +118,7 @@ class static_heat_exchanger:
         None.
 
         """
-        
+
         # qs def.: <0=> liquid entering, qs >1 => vapor entering
 
         self.temps = temps
@@ -196,14 +198,14 @@ class static_heat_exchanger:
                 count+=1
                 sat_v = flp.prop_pq(self.ps[0], 1.,*flp_rest[0])
                                     
-                if self.qs[0] < 0 or self.qs[0] > 1:
+                if self.qs[0] < 0 or self.qs[0] > 1:  # checks if wf is in two-phase area
                     raise Exception(f"working fluid quality is wrong!{self.qs}!")
                     
                 if self.h_enter[0] < -1e8:  # quality will be used                         
-                    sat_l = flp.prop_pq(self.ps[0], self.qs[0],*flp_rest[0])
-                    sf_in = flp.tp(sat_v[0]+self.dT_superh + self.dT_hex, 
+                    sat_l = flp.prop_pq(self.ps[0], self.qs[0],*flp_rest[0]) # entry state of wf? (ist nicht immer bei q=0 weil qs[0] anderen Wert haben kann)
+                    sf_in = flp.tp(sat_v[0]+self.dT_superh + self.dT_hex,  # state of secondary fluid at entry
                                    self.ps[1],*flp_rest[1])
-                    sf_out = flp.tp(sat_l[0] + self.dT_hex, self.ps[1],
+                    sf_out = flp.tp(sat_l[0] + self.dT_hex, self.ps[1],     # state of secondary fluid at exit
                                     *flp_rest[1])
                                         
                 
@@ -340,6 +342,7 @@ class static_heat_exchanger:
             
         plt.xlabel("enthalpy change / (J/(kg of working fluid))")
         plt.ylabel("temperature / (K")
+        plt.grid()
         plt.savefig(fname)
 
 
@@ -367,32 +370,32 @@ if __name__ == "__main__":
     plt.plot((hp0.t_all[1][2, :] - hp0.t_all[1][2, 0]) /
              hp0.m_ratio, hp0.t_all[1][0, :], "o")
     
-    # Evporator with given enthalpy (nearly the same calculation, start later)
-    h_0 = [hp0.enthalpies[0][2], -1e9]
-    hp0 = static_heat_exchanger(
-        flx, Ts, ps, dT_superh=15, dT_hex=1,qs=qs, h_enter=h_0,  compositions=compositions)
-    hp0.pinchpoint()
+    # # Evporator with given enthalpy (nearly the same calculation, start later)
+    # h_0 = [hp0.enthalpies[0][2], -1e9]
+    # hp0 = static_heat_exchanger(
+    #     flx, Ts, ps, dT_superh=15, dT_hex=1,qs=qs, h_enter=h_0,  compositions=compositions)
+    # hp0.pinchpoint()
 
-    # plt.figure()
-    shift1 = hp0.t_all[0][2, -1] - hp0.t_all[0][2, 0]
+    # # plt.figure()
+    # shift1 = hp0.t_all[0][2, -1] - hp0.t_all[0][2, 0]
     
-    plt.plot(hp0.t_all[0][2, :] - hp0.t_all[0][2, 0], hp0.t_all[0][0, :], "k")
-    plt.plot((hp0.t_all[1][2, :] - hp0.t_all[1][2, 0]) /
-             hp0.m_ratio, hp0.t_all[1][0, :], "x")
+    # plt.plot(hp0.t_all[0][2, :] - hp0.t_all[0][2, 0], hp0.t_all[0][0, :], "k")
+    # plt.plot((hp0.t_all[1][2, :] - hp0.t_all[1][2, 0]) /
+    #           hp0.m_ratio, hp0.t_all[1][0, :], "x")
     
-    # Condenser with given enthalpy difference
-    print("condenser")
-    Ts = [350., 290.]
-    ps = [8.92e5,  12e5]
-    fl2 = "Water"
-    flx = [fl1, fl2]
-    qs = [2, -2]
-    hp0 = static_heat_exchanger(
-        flx, Ts, ps, dT_superh=15, qs=qs,heating =False,dH_min=hp0.dh[0],
-        compositions=compositions)
-    hp0.pinchpoint()
+    # # Condenser with given enthalpy difference
+    # print("condenser")
+    # Ts = [350., 290.]
+    # ps = [8.92e5,  12e5]
+    # fl2 = "Water"
+    # flx = [fl1, fl2]
+    # qs = [2, -2]
+    # hp0 = static_heat_exchanger(
+    #     flx, Ts, ps, dT_superh=15, qs=qs,heating =False,dH_min=hp0.dh[0],
+    #     compositions=compositions)
+    # hp0.pinchpoint()
 
-    shift = shift1 -( hp0.t_all[0][2, -1] - hp0.t_all[0][2, 0])
-    plt.plot(hp0.t_all[0][2, :] - hp0.t_all[0][2, 0]+shift, hp0.t_all[0][0, :],".")
-    plt.plot((hp0.t_all[1][2, :] - hp0.t_all[1][2, 0]) /
-              hp0.m_ratio +shift, hp0.t_all[1][0, :], "v")
+    # shift = shift1 -( hp0.t_all[0][2, -1] - hp0.t_all[0][2, 0])
+    # plt.plot(hp0.t_all[0][2, :] - hp0.t_all[0][2, 0]+shift, hp0.t_all[0][0, :],".")
+    # plt.plot((hp0.t_all[1][2, :] - hp0.t_all[1][2, 0]) /
+    #           hp0.m_ratio +shift, hp0.t_all[1][0, :], "v")

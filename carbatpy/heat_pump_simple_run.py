@@ -8,9 +8,11 @@ Created on Sun May 21 10:52:09 2023
 
 
 import CoolProp.CoolProp as CP
+import numpy as np
+
 
 import fluid_properties_rp as fprop
-import numpy as np
+
 import components.compressor_simple as comp
 import components.throttle_simple as throt
 import components.heat_exchanger_thermo as hext
@@ -44,6 +46,7 @@ print(f"\nState after compresor: {state_c_out}, {state_c_out[0]-273.15} C")
 dh_condenser = state_c_out[2] - pass_high_p[2]
 
 
+
 Ts = [T_sat_high_p[0], T_pass]
 dT_sup = state_c_out[0]-T_sat_high_p[0]
 if dT_sup< 5: print(f"Warning superheating too low: {dT_sup} K")
@@ -60,6 +63,8 @@ hp_condenser = hext.static_heat_exchanger(
 hp_condenser.pinchpoint()
 hp_condenser.hex_plot()
 q_condenser =hp_condenser.dh[0]
+
+
 
 throttle_exit = throt.throttle(hp_condenser.t_all[0][:,0], p_levels_wf[0],
                                working_fluid, composition=composition_wf)
