@@ -324,24 +324,24 @@ class static_heat_exchanger:
         plt.figure()
         shift1 = self.t_all[0][2, -1] - self.t_all[0][2, 0]
         
-        plt.plot(self.t_all[0][2, :] - self.t_all[0][2, 0], self.t_all[0][0, :])
+        plt.plot(self.t_all[0][2, :] - self.t_all[0][2, 0], self.t_all[0][0, :]-273.15) # 
         plt.plot((self.t_all[1][2, :] - self.t_all[1][2, 0]) /
-                 self.m_ratio, self.t_all[1][0, :], "o")
+                 self.m_ratio, self.t_all[1][0, :] -273.15 , "o")
         if second !="":
             shift2 = second.t_all[0][2, -1] - second.t_all[0][2, 0]
             
-            plt.plot(second.t_all[0][2, :] - second.t_all[0][2, 0], second.t_all[0][0, :])
+            plt.plot(second.t_all[0][2, :] - second.t_all[0][2, 0], second.t_all[0][0, :]-273.15)
             plt.plot((second.t_all[1][2, :] - second.t_all[1][2, 0]) /
-                     second.m_ratio, second.t_all[1][0, :], "o")
+                     second.m_ratio, second.t_all[1][0, :]-273.15, "o")
             comp_h = [self.t_all[0][2, -1]- self.t_all[0][2, 0] , second.t_all[0][2, -1]- second.t_all[0][2, 0]]
             comp_T = [self.t_all[0][0, -1] , second.t_all[0][0, -1]]
             thr_h = [self.t_all[0][2, 0]- self.t_all[0][2, 0] , second.t_all[0][2, 0]- second.t_all[0][2, 0]]
             thr_T = [self.t_all[0][0, 0] , second.t_all[0][0, 0]]
-            plt.plot(comp_h, comp_T)
-            plt.plot(thr_h, thr_T)
+            plt.plot(comp_h, np.array(comp_T)-273.15)
+            plt.plot(thr_h, np.array(thr_T)-273.15)
             
         plt.xlabel("enthalpy change / (J/(kg of working fluid))")
-        plt.ylabel("temperature / (K")
+        plt.ylabel("temperature / (°C")
         plt.grid()
         plt.savefig(fname)
 

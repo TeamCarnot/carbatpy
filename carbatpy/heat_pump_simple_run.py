@@ -36,7 +36,7 @@ pass_high_p = fprop.tp(T_pass, p_levels_wf[1],
 
 print(f"T-levels for this mixture {T_sat_low_p } K and {T_sat_high_p } K.")
 
-eta_c = .65
+eta_c = .60
 state_in = fprop.tp(*pass_low_p[:2], working_fluid, composition_wf)
 state_c_out = comp.compressor(state_in, p_levels_wf[1], eta_c, 
                               working_fluid, composition=composition_wf)
@@ -78,5 +78,6 @@ evaporator = hext.static_heat_exchanger(
     qs=qs,heating =True, dH_min=dh_ev,
     compositions=compositions)
 evaporator.pinchpoint()
+
 evaporator.hex_plot(hp_condenser)
 # #storage_fluid_ht = 
