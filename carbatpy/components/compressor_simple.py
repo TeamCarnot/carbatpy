@@ -58,9 +58,13 @@ def compressor(state_in, p_out, eta_c, working_fluid, props="REFPROP",
     if calc_type == "const_eta":
         prop_input = [working_fluid, composition , 1, units, props, WF]
         state_out_isentropic = fprop.sp( state_in[4], p_out, *prop_input)  
-        enthalpy_change_real = (state_out_isentropic[2] - state_in[2]) / eta_c
-        state_out = fprop.hp(state_out_isentropic[2] + enthalpy_change_real,
+        enthalpy_change_real = (state_out_isentropic[2] - state_in[2]) / eta_c 
+        state_out = fprop.hp(state_in[2] + enthalpy_change_real, # changed from state_out_isentropic[2] to state_in[2]
                              p_out, *prop_input)
+        
+        print("w_is: ",(state_out_isentropic[2] - state_in[2])/1e3)
+        print("w_real:", enthalpy_change_real/1e3)
+        
     else:
         raise Exception(f"The option{calc_type} is not yet implemented for compressors")
     return state_out
@@ -123,7 +127,7 @@ if __name__ == "__main__":
     p_in = 1e5
     T_in = 300.
     p_out = 10e5
-    eta_c = .65
+    eta_c = .6
     state_in = fprop.tp(T_in, p_in, fluid, composition)
     state_ina = fprop.sp(state_in[4], p_out, fluid, composition)
     state_out = compressor(state_in, p_out, eta_c, fluid, composition=composition)

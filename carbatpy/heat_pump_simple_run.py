@@ -19,12 +19,20 @@ import components.heat_exchanger_thermo as hext
 
 
 working_fluid = "Propane * Butane * Pentane"
-x1 =0.2
-x2 = 0.4
-x3 =1-x1-x2
+x1 =0.1
+x2 = 0.1
+x3 = 0.8
+
+if x1+x2+x3 != 1:
+    print("Warning: sum of mole fractions dont add up to 1")
+
 composition_wf =[x1,x2,x3]
-p_levels_wf = [1.1e5, 5.5e5]
-T_pass =300
+
+print(working_fluid)
+print(composition_wf)
+
+p_levels_wf = [0.5e5, 15.05e5]
+T_pass = 20 + 273.15
 T_sat_low_p = fprop.prop_pq(p_levels_wf[0], 1, 
                       working_fluid, composition_wf)
 T_sat_high_p = fprop.prop_pq(p_levels_wf[1], 1, 
@@ -81,3 +89,35 @@ evaporator.pinchpoint()
 
 evaporator.hex_plot(hp_condenser)
 # #storage_fluid_ht = 
+
+
+#%% Temperature glide
+
+dT_glide_evap_max = fprop.prop_pq(p_levels_wf[0], 1, working_fluid, composition_wf)[0] - \
+                fprop.prop_pq(p_levels_wf[0], 0, working_fluid, composition_wf)[0]   # highest possible temperature glide in evaporator (is evaporation goes from q=0 to q=1. Because at evaporator entry we usually have q>0)
+                
+                
+dT_glide_cond = fprop.prop_pq(p_levels_wf[1], 1, working_fluid, composition_wf)[0] - \
+                fprop.prop_pq(p_levels_wf[1], 0, working_fluid, composition_wf)[0]   
+
+print(f"Max. Temperature glide evaporator: {dT_glide_evap_max}")
+print(f"Temperature glide condenser: {dT_glide_cond}")
+
+
+#%% pressure ratio
+
+PI = p_levels_wf[1]/p_levels_wf[0] # pressure ratio
+
+print("Pressure ratio:"+str(PI))
+
+
+
+
+
+
+
+
+
+
+print("___________________________________________")
+
